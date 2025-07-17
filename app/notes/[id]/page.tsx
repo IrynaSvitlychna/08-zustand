@@ -15,10 +15,10 @@ const { id } = await params;
 
     return {
      title: `Note: ${note.title}`, 
-      description: note.content, 
+      description: note.content.slice(0, 30), 
       openGraph: {
         title: `Note: ${note.title}`,
-        description: note.content,
+        description: note.content.slice(0, 100),
         url: `https://notehub.com/notes/${idNum}`,
         images: [
            {

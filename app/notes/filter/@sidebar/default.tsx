@@ -9,8 +9,8 @@ import {tags} from '@/types/note';
 const NotesSidebar = async () => {
  
 
-    return (
-      <ul className={css.menuList}>
+  return (
+            <ul className={css.menuList}>
          <li className={css.menuItem}>
           <Link href={`/notes/filter/All`} className={css.menuLink}> All </Link>
           </li>
