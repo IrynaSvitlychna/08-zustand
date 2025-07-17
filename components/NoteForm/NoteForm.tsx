@@ -5,12 +5,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Yup from "yup";
 import toast from 'react-hot-toast';
 import { createNote } from "../../lib/api";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useNoteDraftStore } from "@/lib/store/noteStore";
 
-// interface NoteFormProps {
-//   onClose: () => void; 
-// }
+
 
 // Схема валідації за допомогою Yup
 const validationSchema = Yup.object().shape({
@@ -32,22 +31,15 @@ export default function NoteForm( ){
   const queryClient = useQueryClient(); // Ініціалізуємо queryClient
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
-  // const close = () => router.push("/notes");
   
-  const handleSubmit = async (formData: FormData) => {
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
-    const tag = formData.get("tag") as string;
-
-    mutate({ title, content, tag });
-  };
+  const { draft, setDraft, clearDraft } = useNoteDraftStore();
  
   const {mutate, isPending} = useMutation({
     mutationFn: createNote, // Функція з noteService, яка виконує POST-запит
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] }); // Інвалідуємо кеш запитів "notes"
-      // close();
-      router.push("/notes");
+      clearDraft(); // очищаємо чернетку
+      router.back(); // повертаємося на попередню сторінку
       toast.success("Note created"); 
     },
     onError: (error) => {
@@ -57,7 +49,30 @@ export default function NoteForm( ){
     },
   });
 
+  const handleSubmit = async (formData: FormData) => {
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const tag = formData.get("tag") as string;
 
+    mutate({ title, content, tag });
+  };
+ 
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setDraft({ ...draft, [name]: value });
+  };
+
+  const handleCancel = () => {
+    router.back(); // повернення без очищення draft
+  };
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.title = draft.title;
+      formRef.current.content.value = draft.content;
+      formRef.current.tag.value = draft.tag;
+    }
+  }, [draft]);
 
   return (
     <form
@@ -72,9 +87,9 @@ export default function NoteForm( ){
           type="text"
           name="title"
           className={css.input} 
-        // minLenght={3}
-        // maxLenght={50}
+       defaultValue={draft.title}
           required
+          onChange={handleChange}
         />
   </div>
 
@@ -85,12 +100,20 @@ export default function NoteForm( ){
       name="content"
       rows={8}
           className={css.textarea}
-        > </textarea>
+          defaultValue={draft.content}
+          onChange={handleChange}
+        /> 
      </div>
 
   <div className={css.formGroup}>
     <label htmlFor="tag">Tag</label>
-    <select id="tag" name="tag" className={css.select}>
+        <select
+          id="tag"
+          name="tag"
+          className={css.select}
+          defaultValue={draft.tag}
+          onChange={handleChange}
+        >
       <option value="Todo">Todo</option>
       <option value="Work">Work</option>
       <option value="Personal">Personal</option>

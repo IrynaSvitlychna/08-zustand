@@ -16,3 +16,9 @@ export const tags: Tag[] = [
   "Shopping",
   "Todo",
 ];
+
+export type NewNote = {
+  title: string;
+  content: string;
+  tag: string;
+};
