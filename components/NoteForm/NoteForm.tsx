@@ -2,7 +2,7 @@
 
 import css from './NoteForm.module.css';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import * as Yup from "yup";
+// import * as Yup from "yup";
 import toast from 'react-hot-toast';
 import { createNote } from "../../lib/api";
 import { useRef, useEffect } from "react";
@@ -12,19 +12,19 @@ import { useNoteDraftStore } from "@/lib/store/noteStore";
 
 
 // Схема валідації за допомогою Yup
-const validationSchema = Yup.object().shape({
-  title: Yup.string()
-    .min(3, "Title must be at least 3 characters")
-    .max(50, "Title must be at most 50 characters")
-    .required("Title is required"),
-  content: Yup.string().max(500, "Content must be at most 500 characters"),
-  tag: Yup.string()
-    .oneOf(
-      ["Todo", "Work", "Personal", "Meeting", "Shopping"],
-      "Invalid tag selected"
-    )
-    .required("Tag is required"),
-});
+// const validationSchema = Yup.object().shape({
+//   title: Yup.string()
+//     .min(3, "Title must be at least 3 characters")
+//     .max(50, "Title must be at most 50 characters")
+//     .required("Title is required"),
+//   content: Yup.string().max(500, "Content must be at most 500 characters"),
+//   tag: Yup.string()
+//     .oneOf(
+//       ["Todo", "Work", "Personal", "Meeting", "Shopping"],
+//       "Invalid tag selected"
+//     )
+//     .required("Tag is required"),
+// });
 
 export default function NoteForm( ){
    
@@ -62,9 +62,9 @@ export default function NoteForm( ){
     setDraft({ ...draft, [name]: value });
   };
 
-  const handleCancel = () => {
-    router.back(); // повернення без очищення draft
-  };
+  // const handleCancel = () => {
+  //   router.back(); // повернення без очищення draft
+  // };
 
   useEffect(() => {
     if (formRef.current) {

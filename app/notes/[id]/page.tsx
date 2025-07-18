@@ -7,29 +7,30 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export const generateMetaData = async ({ params }: Props): Promise<Metadata> => {
-const { id } = await params;
-  const idNum = Number(id);
 
-  const note = await getSingleNote(idNum);
 
-    return {
-     title: `Note: ${note.title}`, 
-      description: note.content.slice(0, 30), 
-      openGraph: {
-        title: `Note: ${note.title}`,
-        description: note.content.slice(0, 100),
-        url: `https://notehub.com/notes/${idNum}`,
-        images: [
-           {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const parsedId = Number(id);
+  const note = await getSingleNote(parsedId);
+
+  return {
+    title: note.title,
+    description: `${note.content.slice(0, 30)}...`,
+    openGraph: {
+      title: note.title,
+      description: `${note.content.slice(0, 30)}...`,
+      url: `https://notehub.com/notes/${id}`,
+      images: [
+        {
           url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
           width: 1200,
           height: 630,
-          alt: note.title,
+          alt: `${note.title} | NoteHub`,
         },
-        ],
-    }
-  }
+      ],
+    },
+  };
 }
 
 const NoteDetails = async ({ params }: Props) => {
