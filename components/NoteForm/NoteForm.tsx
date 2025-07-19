@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import * as Yup from "yup";
 import toast from 'react-hot-toast';
 import { createNote } from "../../lib/api";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useNoteDraftStore } from "@/lib/store/noteStore";
 
@@ -49,35 +49,24 @@ export default function NoteForm( ){
     },
   });
 
-  const handleSubmit = async (formData: FormData) => {
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
-    const tag = formData.get("tag") as string;
-
-    mutate({ title, content, tag });
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutate(draft); // використовуємо draft напряму
   };
- 
-   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+
+     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setDraft({ ...draft, [name]: value });
   };
 
-  // const handleCancel = () => {
-  //   router.back(); // повернення без очищення draft
-  // };
+  const handleCancel = () => {
+    router.back(); // повернення без очищення draft
+  };
 
-  useEffect(() => {
-    if (formRef.current) {
-      formRef.current.title = draft.title;
-      formRef.current.content.value = draft.content;
-      formRef.current.tag.value = draft.tag;
-    }
-  }, [draft]);
-
-  return (
+    return (
     <form
     ref={formRef}
-    action={handleSubmit}
+    onSubmit={handleSubmit}
    className={css.form}
     >
   <div className={css.formGroup}>
@@ -87,7 +76,7 @@ export default function NoteForm( ){
           type="text"
           name="title"
           className={css.input} 
-       defaultValue={draft.title}
+       value={draft.title}
           required
           onChange={handleChange}
         />
@@ -100,7 +89,7 @@ export default function NoteForm( ){
       name="content"
       rows={8}
           className={css.textarea}
-          defaultValue={draft.content}
+          value={draft.content}
           onChange={handleChange}
         /> 
      </div>
@@ -111,7 +100,7 @@ export default function NoteForm( ){
           id="tag"
           name="tag"
           className={css.select}
-          defaultValue={draft.tag}
+          value={draft.tag}
           onChange={handleChange}
         >
       <option value="Todo">Todo</option>
@@ -123,7 +112,7 @@ export default function NoteForm( ){
       </div>
 
   <div className={css.actions}>
-          <button type="button" className={css.cancelButton} >
+          <button type="button" className={css.cancelButton} onClick={handleCancel}>
       Cancel
     </button>
     <button
