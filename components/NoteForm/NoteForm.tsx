@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import * as Yup from "yup";
 import toast from 'react-hot-toast';
 import { createNote } from "../../lib/api";
-import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useNoteDraftStore } from "@/lib/store/noteStore";
 
@@ -29,7 +28,6 @@ import { useNoteDraftStore } from "@/lib/store/noteStore";
 export default function NoteForm( ){
    
   const queryClient = useQueryClient(); // Ініціалізуємо queryClient
-  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   
   const { draft, setDraft, clearDraft } = useNoteDraftStore();
@@ -65,7 +63,6 @@ export default function NoteForm( ){
 
     return (
     <form
-    ref={formRef}
     onSubmit={handleSubmit}
    className={css.form}
     >
